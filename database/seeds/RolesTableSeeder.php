@@ -17,14 +17,43 @@ class RolesTableSeeder extends Seeder
          * Add Roles
          *
          */
-        if (Role::where('slug', '=', 'admin')->first() === null) {
+        if (Role::where('slug', '=', 'owner')->first() === null) {
+            $adminRole = Role::create([
+                'name'        => 'Owner',
+                'slug'        => 'owner',
+                'description' => 'Owner Role',
+                'level'       => 99,
+            ]);
+        }
+
+		if (Role::where('slug', '=', 'admin')->first() === null) {
             $adminRole = Role::create([
                 'name'        => 'Admin',
                 'slug'        => 'admin',
                 'description' => 'Admin Role',
-                'level'       => 5,
+                'level'       => 98,
             ]);
         }
+
+        if (Role::where('slug', '=', 'manager')->first() === null) {
+            $userRole = Role::create([
+                'name'        => 'Manager',
+                'slug'        => 'manager',
+                'description' => 'Manager Role',
+                'level'       => 70,
+            ]);
+        }
+
+
+        if (Role::where('slug', '=', 'staff')->first() === null) {
+            $userRole = Role::create([
+                'name'        => 'Staff',
+                'slug'        => 'staff',
+                'description' => 'Staff Role',
+                'level'       => 50,
+            ]);
+        }
+
 
         if (Role::where('slug', '=', 'user')->first() === null) {
             $userRole = Role::create([

@@ -16,8 +16,34 @@ class UsersTableSeeder extends Seeder
     {
         $faker = Faker\Factory::create();
         $profile = new Profile();
+        $ownerRole = Role::whereName('Owner')->first();
         $adminRole = Role::whereName('Admin')->first();
+        $managerRole = Role::whereName('Manager')->first();
+        $staffRole = Role::whereName('Staff')->first();
         $userRole = Role::whereName('User')->first();
+
+
+        // Seed test owner
+        $seededOwnerEmail = 'owner@owner.com';
+        $user = User::where('email', '=', $seededOwnerEmail)->first();
+        if ($user === null) {
+            $user = User::create([
+                'name'                           => $faker->userName,
+                'first_name'                     => $faker->firstName,
+                'last_name'                      => $faker->lastName,
+                'email'                          => $seededOwnerEmail,
+                'password'                       => Hash::make('password'),
+                'token'                          => str_random(64),
+                'activated'                      => true,
+                'signup_confirmation_ip_address' => $faker->ipv4,
+                'admin_ip_address'               => $faker->ipv4,
+            ]);
+
+            $user->profile()->save($profile);
+            $user->attachRole($ownerRole);
+            $user->save();
+        }
+
 
         // Seed test admin
         $seededAdminEmail = 'admin@admin.com';
@@ -39,6 +65,61 @@ class UsersTableSeeder extends Seeder
             $user->attachRole($adminRole);
             $user->save();
         }
+
+
+        // Seed test managerRole
+        $seededManagerEmail = 'manager@manager.com';
+        $user = User::where('email', '=', $seededManagerEmail)->first();
+        if ($user === null) {
+            $user = User::create([
+                'name'                           => $faker->userName,
+                'first_name'                     => $faker->firstName,
+                'last_name'                      => $faker->lastName,
+                'email'                          => $seededManagerEmail,
+                'password'                       => Hash::make('password'),
+                'token'                          => str_random(64),
+                'activated'                      => true,
+                'signup_confirmation_ip_address' => $faker->ipv4,
+                'admin_ip_address'               => $faker->ipv4,
+            ]);
+
+            $user->profile()->save($profile);
+            $user->attachRole($managerRole);
+            $user->save();
+        }
+
+
+        // Seed test staff
+        $seededStaffEmail = 'staff@staff.com';
+        $user = User::where('email', '=', $seededStaffEmail)->first();
+        if ($user === null) {
+            $user = User::create([
+                'name'                           => $faker->userName,
+                'first_name'                     => $faker->firstName,
+                'last_name'                      => $faker->lastName,
+                'email'                          => $seededStaffEmail,
+                'password'                       => Hash::make('password'),
+                'token'                          => str_random(64),
+                'activated'                      => true,
+                'signup_confirmation_ip_address' => $faker->ipv4,
+                'admin_ip_address'               => $faker->ipv4,
+            ]);
+
+            $user->profile()->save($profile);
+            $user->attachRole($staffRole);
+            $user->save();
+        }
+
+        //Seed test staff
+        $staffmembers = factory(App\Models\User::class, 50)->create();
+        $staff = factory(App\Models\Profile::class, 50)->create();
+        $allstaffmembers = User::where('id', '>', 4)->get();
+        foreach ($allstaffmembers as $staffmember) {
+            if (!($staffmember->isAdmin()) && !($staffmember->isUnverified())) {
+                $staffmember->attachRole($staffRole);
+            }
+        }
+
 
         // Seed test user
         $user = User::where('email', '=', 'user@user.com')->first();
